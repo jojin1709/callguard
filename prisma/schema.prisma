@@ -105,3 +105,27 @@ model NameVote {
 
   @@index([phoneNumberId])
 }
+
+model LocalSpamEntry {
+  id          String   @id @default(cuid())
+  phoneE164   String
+  source      String   // "blocked-numbers", "callshield", "fcc", "huggingface"
+  category    String   // "scam", "telemarketer", "robocall", "spam", "phishing", etc.
+  description String?
+  reportCount Int      @default(1)
+  importedAt  DateTime @default(now())
+
+  @@unique([phoneE164, source])
+  @@index([phoneE164])
+  @@index([source])
+}
+
+model SmsSpamKeyword {
+  id        String   @id @default(cuid())
+  pattern   String   @unique // regex or exact match keyword
+  category  String   // "phishing", "scam", "toll_fraud", etc.
+  source    String   @default("huggingface")
+  importedAt DateTime @default(now())
+
+  @@index([category])
+}
