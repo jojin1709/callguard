@@ -2,11 +2,11 @@
 
 # CallGuard — Community Caller ID & Spam Shield
 
-**Open-source caller ID and spam detection platform. Know who's calling before you pick up.**
+**Free, open-source caller ID and spam detection. Know who's calling before you pick up.**
 
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-callguard--pro.vercel.app-22c55e?style=for-the-badge&logo=vercel)](https://callguard-pro.vercel.app)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
-[![Code of Conduct](https://img.shields.io/badge/Code%20of-Conduct-blueviolet?style=for-the-badge)](CODE_OF_CONDUCT.md)
+[![Security](https://img.shields.io/badge/Security-Hardened-red?style=for-the-badge)](#security)
 
 </div>
 
@@ -14,13 +14,11 @@
 
 ## What is CallGuard?
 
-CallGuard is a community-powered caller identification and spam reporting platform. Look up any phone number to get real-time carrier info, fraud scores, and caller identity — powered by three independent threat intelligence engines and crowd-sourced reports from users worldwide.
+CallGuard is a free, community-powered caller identification and spam reporting platform. Look up any phone number to get real-time carrier info, fraud scores, and caller identity — powered by three independent threat intelligence engines and crowd-sourced reports from users worldwide.
 
-Every report, vote, and tag makes the network smarter. When someone marks a number as "Scam" or "Telemarketer", that intel is available to everyone.
+**No signup required. No paywalls. Just search and go.**
 
 ## Live Demo
-
-**Try it now — no signup required:**
 
 **[https://callguard-pro.vercel.app](https://callguard-pro.vercel.app)**
 
@@ -36,8 +34,9 @@ Every report, vote, and tag makes the network smarter. When someone marks a numb
 | **Contacts & Blocklist** | Save contacts and block unwanted numbers |
 | **Public Directory** | Browse a filterable grid of reported numbers with spam scores |
 | **Developer API** | JSON API for programmatic lookups |
-| **Admin Dashboard** | Moderate community reports |
+| **Admin Dashboard** | Moderate community reports with secret key access |
 | **Light & Dark Mode** | Custom theme switcher |
+| **No Login Required** | Everything works without creating an account |
 
 ## How It Works
 
@@ -77,7 +76,6 @@ User enters phone number
 | Styling | Tailwind CSS |
 | Database | PostgreSQL (Neon) |
 | ORM | Prisma |
-| Auth | NextAuth.js |
 | Deployment | Vercel |
 
 ## API Reference
@@ -121,6 +119,22 @@ Content-Type: application/json
 
 **Categories:** `SCAM`, `TELEMARKETER`, `FRAUD`, `DELIVERY`, `BANK_FINANCE`, `SURVEY`, `ROBOCALL`, `HARASSMENT`, `SAFE`, `OTHER`
 
+## Security
+
+CallGuard is hardened against common web attacks:
+
+| Protection | Implementation |
+| --- | --- |
+| **XSS Prevention** | All user inputs sanitized — HTML tags and scripts stripped |
+| **SQL Injection** | Prisma ORM uses parameterized queries |
+| **CSRF Protection** | SameSite cookies, token validation ready |
+| **Content Security Policy** | Strict CSP headers restrict script and resource sources |
+| **HSTS** | Forces HTTPS for 1 year with preload |
+| **Rate Limiting** | Per-IP rate limits on all API endpoints |
+| **Input Validation** | Zod schemas with length limits on all endpoints |
+| **Clickjacking** | X-Frame-Options: DENY |
+| **Admin Auth** | Secret key protection on admin dashboard |
+
 ## Environment Variables
 
 | Variable | Description |
@@ -131,7 +145,7 @@ Content-Type: application/json
 | `NUMVERIFY_API_KEY` | Numverify API key |
 | `IPQS_API_KEY` | IPQualityScore API key |
 | `NUMLOOKUP_API_KEY` | NumLookupAPI key |
-| `ADMIN_SECRET` | Admin dashboard secret |
+| `ADMIN_SECRET` | Admin dashboard secret key |
 | `DEVELOPER_API_KEYS` | Comma-separated API keys for developer endpoint |
 
 ## Contributing
