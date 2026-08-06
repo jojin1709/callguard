@@ -1,8 +1,8 @@
 <div align="center">
 
-# CallGuard — Community Caller ID & Spam Shield
+# CallGuard — Multi-Engine Intelligence Platform
 
-**Free, open-source caller ID and spam detection. Know who's calling before you pick up.**
+**Free, open-source phone, email, IP, domain, and SMS spam detection.**
 
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-callguard--pro.vercel.app-22c55e?style=for-the-badge&logo=vercel)](https://callguard-pro.vercel.app)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
@@ -14,7 +14,7 @@
 
 ## What is CallGuard?
 
-CallGuard is a free, community-powered caller identification and spam reporting platform. Look up any phone number to get real-time carrier info, fraud scores, caller identity, and spam database checks — powered by **7 independent intelligence engines**, a **51,000+ number local spam database**, and crowd-sourced reports from users worldwide.
+CallGuard is a free, community-powered multi-engine intelligence platform. Look up any phone number, email address, IP address, or domain to get real-time carrier info, fraud scores, caller identity, spam database checks, and disposable email detection — powered by **7 independent intelligence engines**, a **51,000+ number local spam database**, and crowd-sourced reports from users worldwide.
 
 **No signup required. No paywalls. Just search and go.**
 
@@ -26,19 +26,22 @@ CallGuard is a free, community-powered caller identification and spam reporting 
 
 | Feature | Description |
 | --- | --- |
-| **7-Engine Lookups** | NumLookup, Numverify, IPQS, FreeCNAM, Neutrino Validate, Neutrino HLR, and Local Spam DB run in parallel |
-| **Local Spam Database** | 51K+ numbers from blocked-numbers, CallShield, FCC complaints, and SMS keyword patterns |
+| **Phone Lookup (7 engines)** | NumLookup, Numverify, IPQS, FreeCNAM, Neutrino Validate, Neutrino HLR, Local Spam DB |
+| **Email Verification** | Neutrino email-verify — disposable, freemail, catch-all, SMTP status, domain health |
+| **IP Geolocation** | Neutrino IP info — hostname, country, region, city, timezone, coordinates |
+| **Domain Reputation** | Neutrino domain-lookup — malicious flag, rank, age, registrar, DNS/mail/website status |
+| **SMS Spam Checker** | 30+ regex patterns for phishing, scam, robocall, and spam detection |
+| **Local Spam Database** | 51K+ numbers from blocked-numbers, CallShield, FCC complaints, and SMS keywords |
 | **Caller Name (CNAM)** | FreeCNAM integration provides real caller names for US numbers |
-| **Carrier-Level Detection** | Neutrino HLR lookup detects roaming, porting, and real-time carrier info |
+| **Carrier-Level Detection** | Neutrino HLR detects roaming, porting, and real-time carrier info |
 | **Community Reports** | Tag any number as Scam, Telemarketer, Delivery, Safe, and more |
 | **Crowd Voting** | Upvote/downvote caller names to verify accuracy |
 | **Bulk Scanning** | Scan up to 10 numbers at once |
 | **Search History** | Automatic tracking of your recent lookups |
 | **Contacts & Blocklist** | Save contacts and block unwanted numbers |
 | **Public Directory** | Browse a filterable grid of reported numbers with spam scores |
-| **Developer API** | JSON API for programmatic lookups |
+| **Developer API** | JSON API for phone, email, IP, domain, and SMS lookups |
 | **Admin Dashboard** | Moderate reports, manage local spam DB, import/clear data sources |
-| **SMS Spam Detection** | 30+ regex patterns for phishing, scam, and spam message detection |
 | **Light & Dark Mode** | Custom theme switcher |
 | **No Login Required** | Everything works without creating an account |
 
@@ -114,46 +117,33 @@ User enters phone number
 
 ## API Reference
 
-### Lookup a Number
-
+### Phone Lookup (requires API key)
 ```
 GET /api/developer/lookup?phone=+919876543210&api_key=YOUR_KEY
 ```
 
-**Response:**
-
-```json
-{
-  "status": 200,
-  "data": {
-    "e164": "+919876543210",
-    "valid": true,
-    "carrier": "Jio",
-    "location": "Mumbai, Maharashtra",
-    "lineType": "mobile",
-    "fraudScore": 0,
-    "isVoip": false,
-    "callerName": null,
-    "isRoaming": false,
-    "isPorted": false
-  }
-}
+### Email Verification
+```
+GET /api/developer/email?email=user@example.com
 ```
 
-### Submit a Report
-
+### IP Geolocation
 ```
-POST /api/numbers/{phone}
+GET /api/developer/ip?ip=8.8.8.8
+```
+
+### Domain Reputation
+```
+GET /api/developer/domain?domain=example.com
+```
+
+### SMS Spam Check
+```
+POST /api/developer/sms
 Content-Type: application/json
 
-{
-  "displayName": "Scam Caller",
-  "category": "SCAM",
-  "note": "Asked for OTP"
-}
+{ "text": "Congratulations! You won a free iPhone." }
 ```
-
-**Categories:** `SCAM`, `TELEMARKETER`, `FRAUD`, `DELIVERY`, `BANK_FINANCE`, `SURVEY`, `ROBOCALL`, `HARASSMENT`, `SAFE`, `OTHER`
 
 ## Security
 

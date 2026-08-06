@@ -35,7 +35,19 @@ export default function Navbar() {
 
         <nav className="flex items-center gap-4 text-xs font-mono flex-wrap">
           <Link href="/" className="text-mist transition hover:text-fog">
-            Lookup
+            Phone
+          </Link>
+          <Link href="/email" className="text-mist transition hover:text-fog">
+            Email
+          </Link>
+          <Link href="/ip" className="text-mist transition hover:text-fog">
+            IP
+          </Link>
+          <Link href="/domain" className="text-mist transition hover:text-fog">
+            Domain
+          </Link>
+          <Link href="/sms" className="text-mist transition hover:text-fog">
+            SMS
           </Link>
           <Link href="/bulk" className="text-mist transition hover:text-fog">
             Bulk

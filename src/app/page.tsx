@@ -48,7 +48,7 @@ export default function HomePage() {
       <section className="grid items-center gap-12 py-8 md:grid-cols-2 md:py-12">
         <div>
           <p className="font-mono text-xs uppercase tracking-[0.25em] text-brand">
-            Open Caller & Database Engine
+            Open Intelligence Engine
           </p>
           <h1 className="mt-4 font-display text-4xl font-medium leading-[1.05] text-fog md:text-5xl">
             Know who&rsquo;s calling
@@ -56,10 +56,17 @@ export default function HomePage() {
             before you answer.
           </h1>
           <p className="mt-5 max-w-md text-mist">
-            Search any phone number against crowdsourced reports, live Numverify API validation, and public caller directory records — no account required.
+            Search any phone number, email, IP address, or domain against 7 intelligence engines, crowdsourced reports, and a 51K+ spam database — no account required.
           </p>
           <div className="mt-8">
             <SearchBar />
+          </div>
+
+          <div className="mt-6 flex flex-wrap gap-2">
+            <Link href="/email" className="rounded-full border border-line bg-panel/60 px-3 py-1 text-xs font-mono text-mist transition hover:border-brand/50 hover:text-fog">Email Verify</Link>
+            <Link href="/ip" className="rounded-full border border-line bg-panel/60 px-3 py-1 text-xs font-mono text-mist transition hover:border-brand/50 hover:text-fog">IP Lookup</Link>
+            <Link href="/domain" className="rounded-full border border-line bg-panel/60 px-3 py-1 text-xs font-mono text-mist transition hover:border-brand/50 hover:text-fog">Domain Check</Link>
+            <Link href="/sms" className="rounded-full border border-line bg-panel/60 px-3 py-1 text-xs font-mono text-mist transition hover:border-brand/50 hover:text-fog">SMS Spam Check</Link>
           </div>
 
           {quickBadges.length > 0 && (

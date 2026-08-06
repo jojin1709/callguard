@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { normalizePhone, fetchNumlookupData, fetchIpqsData } from "@/lib/phone";
+import { normalizePhone, lookupWithLocalDB } from "@/lib/phone";
 import { rateLimit, getClientIp } from "@/lib/rate-limit";
 import { z } from "zod";
 
@@ -24,10 +24,7 @@ export async function GET(req: Request) {
   });
 
   if (!parsed.success) {
-    return NextResponse.json(
-      { error: parsed.error.issues[0].message },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: parsed.error.issues[0].message }, { status: 400 });
   }
 
   const { phone, api_key } = parsed.data;
@@ -42,24 +39,26 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: "Invalid phone number format." }, { status: 400 });
   }
 
-  const [numlookup, ipqs] = await Promise.all([
-    fetchNumlookupData(normalized.e164),
-    fetchIpqsData(normalized.e164),
-  ]);
+  const lookup = await lookupWithLocalDB(normalized.e164);
 
   return NextResponse.json({
     status: 200,
     data: {
       e164: normalized.e164,
-      valid: numlookup?.valid || ipqs?.valid || normalized.valid,
-      carrier: numlookup?.carrier || ipqs?.carrier || normalized.lineTypeIntelligence.carrierName,
-      location: numlookup?.location || [ipqs?.city, ipqs?.region].filter(Boolean).join(", ") || normalized.lineTypeIntelligence.countryName,
-      lineType: numlookup?.line_type || ipqs?.line_type || normalized.lineTypeIntelligence.lineType,
-      fraudScore: ipqs?.fraud_score ?? 0,
-      isVoip: ipqs?.VOIP ?? normalized.lineTypeIntelligence.isVoip,
-      isPrepaid: ipqs?.prepaid ?? false,
-      tcpaBlacklist: ipqs?.tcpa_blacklist ?? false,
-      callerName: ipqs?.name && ipqs.name !== "N/A" ? ipqs.name : null,
+      valid: normalized.valid,
+      carrier: lookup.carrierName,
+      location: lookup.neutrinoValidate?.location || lookup.numlookup?.location || [lookup.ipqs?.city, lookup.ipqs?.region].filter(Boolean).join(", ") || normalized.lineTypeIntelligence.countryName,
+      lineType: lookup.lineType || normalized.lineTypeIntelligence.lineType,
+      fraudScore: lookup.ipqs?.fraud_score ?? lookup.combinedSpamScore,
+      isVoip: lookup.ipqs?.VOIP ?? normalized.lineTypeIntelligence.isVoip,
+      isPrepaid: lookup.ipqs?.prepaid ?? false,
+      tcpaBlacklist: lookup.ipqs?.tcpa_blacklist ?? false,
+      callerName: lookup.callerName,
+      isRoaming: lookup.isRoaming,
+      isPorted: lookup.isPorted,
+      isSpam: lookup.localSpam.isSpam,
+      spamSources: lookup.localSpam.sources,
+      localSpamScore: lookup.localSpam.spamScore,
     },
   });
 }
