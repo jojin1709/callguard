@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { requireAdmin } from "@/lib/admin-auth";
 import { rateLimit, getClientIp } from "@/lib/rate-limit";
 import { z } from "zod";
 

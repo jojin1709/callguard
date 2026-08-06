@@ -15,6 +15,7 @@ const config: Config = {
         alert: "#FF5D5D",
         warn: "#FFB648",
         brand: "#4C7CFF",
+        midnight: "#0B0F14",
       },
       fontFamily: {
         display: ["var(--font-display)"],

@@ -89,7 +89,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       url: "https://www.linkedin.com/in/jojin-john/",
     },
     featureList: [
-      "Triple-Engine Phone Lookup",
+      "7-Engine Phone Lookup",
       "Community Spam Reports",
       "Crowd Voting on Caller Names",
       "Bulk Phone Scanning",

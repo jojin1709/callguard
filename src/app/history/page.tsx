@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { CATEGORY_LABELS } from "@/lib/phone";
+import { CATEGORY_LABELS } from "@/lib/categories";
 
 type HistoryItem = {
   id: string;

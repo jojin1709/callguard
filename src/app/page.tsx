@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import SearchBar from "@/components/SearchBar";
-import { CATEGORY_LABELS } from "@/lib/phone";
+import { CATEGORY_LABELS } from "@/lib/categories";
 
 type DirectoryItem = {
   id: string;

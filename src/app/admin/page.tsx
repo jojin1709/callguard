@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { CATEGORY_LABELS } from "@/lib/phone";
+import { CATEGORY_LABELS } from "@/lib/categories";
 
 type AdminReport = {
   id: string;

@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useParams } from "next/navigation";
-import { CATEGORY_LABELS } from "@/lib/phone";
+import { CATEGORY_LABELS } from "@/lib/categories";
 
 type LineTypeIntel = {
   lineType: "mobile" | "landline" | "voip" | "toll_free" | "unknown";
