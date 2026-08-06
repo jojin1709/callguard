@@ -1,0 +1,107 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+}
+
+model User {
+  id           String    @id @default(cuid())
+  name         String
+  email        String    @unique
+  passwordHash String
+  createdAt    DateTime  @default(now())
+  isAdmin      Boolean   @default(false)
+
+  reports       Report[]
+  contacts      Contact[]
+  blocklist     BlocklistEntry[]
+  searchHistory SearchHistory[]
+  nameVotes     NameVote[]
+}
+
+model PhoneNumber {
+  id          String   @id @default(cuid())
+  e164        String   @unique
+  countryCode String?
+  createdAt   DateTime @default(now())
+
+  reports       Report[]
+  contacts      Contact[]
+  blocklist     BlocklistEntry[]
+  searchHistory SearchHistory[]
+  nameVotes     NameVote[]
+}
+
+model Report {
+  id            String   @id @default(cuid())
+  phoneNumberId String
+  userId        String
+  displayName   String?
+  category      String
+  note          String?
+  createdAt     DateTime @default(now())
+
+  phoneNumber PhoneNumber @relation(fields: [phoneNumberId], references: [id], onDelete: Cascade)
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([phoneNumberId])
+}
+
+model Contact {
+  id            String   @id @default(cuid())
+  userId        String
+  phoneNumberId String
+  name          String
+  createdAt     DateTime @default(now())
+
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  phoneNumber PhoneNumber @relation(fields: [phoneNumberId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, phoneNumberId])
+}
+
+model BlocklistEntry {
+  id            String   @id @default(cuid())
+  userId        String
+  phoneNumberId String
+  reason        String?
+  createdAt     DateTime @default(now())
+
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  phoneNumber PhoneNumber @relation(fields: [phoneNumberId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, phoneNumberId])
+}
+
+model SearchHistory {
+  id            String   @id @default(cuid())
+  phoneNumberId String
+  userId        String?
+  ipAddress     String?
+  createdAt     DateTime @default(now())
+
+  phoneNumber PhoneNumber @relation(fields: [phoneNumberId], references: [id], onDelete: Cascade)
+  user        User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([ipAddress])
+  @@index([phoneNumberId])
+}
+
+model NameVote {
+  id            String   @id @default(cuid())
+  phoneNumberId String
+  userId        String?
+  ipAddress     String?
+  callerName    String
+  vote          Int      @default(1) // +1 upvote, -1 downvote
+  createdAt     DateTime @default(now())
+
+  phoneNumber PhoneNumber @relation(fields: [phoneNumberId], references: [id], onDelete: Cascade)
+  user        User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([phoneNumberId])
+}

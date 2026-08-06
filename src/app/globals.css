@@ -1,0 +1,83 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+  --color-ink: #0B0F14;
+  --color-panel: #121821;
+  --color-panel2: #1A2230;
+  --color-line: #26303F;
+  --color-mist: #8A97A8;
+  --color-fog: #C4CDDA;
+}
+
+[data-theme="light"] {
+  color-scheme: light;
+  --color-ink: #F4F6F9;
+  --color-panel: #FFFFFF;
+  --color-panel2: #E2E8F0;
+  --color-line: #CBD5E1;
+  --color-mist: #64748B;
+  --color-fog: #0F172A;
+}
+
+@layer components {
+  .input {
+    @apply w-full rounded-xl border border-line bg-panel px-4 py-2.5 text-fog outline-none transition focus:border-brand/60;
+  }
+  .btn-primary {
+    @apply rounded-xl bg-brand px-5 py-2.5 font-medium text-white transition hover:bg-brand/90 disabled:opacity-60;
+  }
+  .btn-ghost {
+    @apply rounded-xl border border-line px-5 py-2.5 font-medium text-mist transition hover:border-brand/60 hover:text-fog;
+  }
+  .card {
+    @apply rounded-xl2 border border-line bg-panel p-6;
+  }
+}
+
+html, body {
+  background-color: var(--color-ink);
+  color: var(--color-fog);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+::selection {
+  background: #4C7CFF;
+  color: #FFFFFF;
+}
+
+.radar-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  border: 1px solid rgba(76, 124, 255, 0.25);
+}
+
+@keyframes radar-pulse {
+  0% { transform: scale(0.6); opacity: 0.6; }
+  100% { transform: scale(1.8); opacity: 0; }
+}
+
+.radar-pulse {
+  animation: radar-pulse 2.4s ease-out infinite;
+}
+
+.scan-line {
+  background: linear-gradient(90deg, transparent, rgba(76,124,255,0.5), transparent);
+}
+
+@keyframes radar-sweep {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.radar-sweep {
+  animation: radar-sweep 3.2s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .radar-pulse { animation: none; }
+  .radar-sweep { animation: none; }
+}
