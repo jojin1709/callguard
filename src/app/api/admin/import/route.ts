@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { verifyAdminAuth } from "@/lib/admin-auth";
+import { requireAdmin } from "@/lib/admin-auth";
 import { prisma } from "@/lib/prisma";
 
 function normalizePhone(raw: string): string | null {
@@ -165,7 +165,8 @@ async function importKeywords(): Promise<number> {
 }
 
 export async function POST(req: NextRequest) {
-  if (!verifyAdminAuth(req)) {
+  const { authorized } = await requireAdmin(req);
+  if (!authorized) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

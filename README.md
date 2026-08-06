@@ -14,7 +14,7 @@
 
 ## What is CallGuard?
 
-CallGuard is a free, community-powered caller identification and spam reporting platform. Look up any phone number to get real-time carrier info, fraud scores, and caller identity — powered by three independent threat intelligence engines and crowd-sourced reports from users worldwide.
+CallGuard is a free, community-powered caller identification and spam reporting platform. Look up any phone number to get real-time carrier info, fraud scores, caller identity, and spam database checks — powered by **7 independent intelligence engines**, a **51,000+ number local spam database**, and crowd-sourced reports from users worldwide.
 
 **No signup required. No paywalls. Just search and go.**
 
@@ -26,7 +26,10 @@ CallGuard is a free, community-powered caller identification and spam reporting 
 
 | Feature | Description |
 | --- | --- |
-| **Triple-Engine Lookups** | NumLookupAPI, Numverify, and IPQualityScore run in parallel for carrier, line type, fraud score, and identity data |
+| **7-Engine Lookups** | NumLookup, Numverify, IPQS, FreeCNAM, Neutrino Validate, Neutrino HLR, and Local Spam DB run in parallel |
+| **Local Spam Database** | 51K+ numbers from blocked-numbers, CallShield, FCC complaints, and SMS keyword patterns |
+| **Caller Name (CNAM)** | FreeCNAM integration provides real caller names for US numbers |
+| **Carrier-Level Detection** | Neutrino HLR lookup detects roaming, porting, and real-time carrier info |
 | **Community Reports** | Tag any number as Scam, Telemarketer, Delivery, Safe, and more |
 | **Crowd Voting** | Upvote/downvote caller names to verify accuracy |
 | **Bulk Scanning** | Scan up to 10 numbers at once |
@@ -34,7 +37,8 @@ CallGuard is a free, community-powered caller identification and spam reporting 
 | **Contacts & Blocklist** | Save contacts and block unwanted numbers |
 | **Public Directory** | Browse a filterable grid of reported numbers with spam scores |
 | **Developer API** | JSON API for programmatic lookups |
-| **Admin Dashboard** | Moderate community reports with secret key access |
+| **Admin Dashboard** | Moderate reports, manage local spam DB, import/clear data sources |
+| **SMS Spam Detection** | 30+ regex patterns for phishing, scam, and spam message detection |
 | **Light & Dark Mode** | Custom theme switcher |
 | **No Login Required** | Everything works without creating an account |
 
@@ -44,28 +48,58 @@ CallGuard is a free, community-powered caller identification and spam reporting 
 User enters phone number
         │
         ▼
-┌─────────────────────────────────┐
-│   Triple-Engine Parallel Scan   │
-│  NumLookup + Numverify + IPQS   │
-└──────────────┬──────────────────┘
-               │
-               ▼
-┌─────────────────────────────────┐
-│      Community Reports &        │
-│      Crowd Verification         │
-└──────────────┬──────────────────┘
-               │
-               ▼
-┌─────────────────────────────────┐
-│   Combined Threat Intelligence  │
-│   Score + Caller Identity       │
-└─────────────────────────────────┘
+┌─────────────────────────────────────────┐
+│    7-Engine Parallel Intelligence Scan  │
+│                                         │
+│  ┌──────────┐  ┌──────────┐  ┌───────┐ │
+│  │ Numverify│  │Numlookup │  │ IPQS  │ │
+│  └──────────┘  └──────────┘  └───────┘ │
+│  ┌──────────┐  ┌──────────┐  ┌───────┐ │
+│  │FreeCNAM  │  │ Neutrino │  │ Local │ │
+│  │(caller)  │  │(validate │  │ Spam  │ │
+│  │          │  │ + HLR)   │  │  DB   │ │
+│  └──────────┘  └──────────┘  └───────┘ │
+└──────────────────┬──────────────────────┘
+                   │
+                   ▼
+┌─────────────────────────────────────────┐
+│      Community Reports & Crowd          │
+│      Verification + SMS Keywords        │
+└──────────────────┬──────────────────────┘
+                   │
+                   ▼
+┌─────────────────────────────────────────┐
+│   Combined Threat Intelligence Score    │
+│   + Carrier + Roaming + Ported Status   │
+│   + Caller Identity + Line Type         │
+└─────────────────────────────────────────┘
 ```
 
 1. **Normalize** — Any phone format is parsed into E.164 standard
-2. **Scan** — Three APIs run in parallel for carrier, fraud, and identity data
-3. **Enrich** — Community reports and votes add crowd-sourced intelligence
-4. **Report** — Combined threat score, likely name, and full breakdown delivered
+2. **Scan** — 7 APIs run in parallel for carrier, fraud, identity, and local DB data
+3. **Enrich** — Community reports, crowd votes, and SMS keyword matching add intelligence
+4. **Report** — Combined threat score, carrier info, roaming/porting status, and caller name delivered
+
+## Intelligence Sources
+
+| # | Source | Type | Data Provided |
+|---| --- | --- | --- |
+| 1 | **Numverify** | API (100/mo free) | Carrier, line type, location |
+| 2 | **NumLookupAPI** | API (100/mo free) | Carrier, line type, location |
+| 3 | **IPQualityScore** | API (~1K/mo free) | Fraud score, spammer flag, VOIP, risky |
+| 4 | **FreeCNAM** | API (unlimited) | Caller name (CNAM) |
+| 5 | **Neutrino Phone Validate** | API (10K/day free) | Number type, location, carrier prefix |
+| 6 | **Neutrino HLR Lookup** | API (paid) | Real carrier, roaming, ported status |
+| 7 | **Local Spam DB** | Self-hosted | 51K+ spam numbers + 30 SMS keyword patterns |
+
+### Local Spam Database Sources
+
+| Source | Records | Description |
+| --- | --- | --- |
+| blocked-numbers (GitHub) | 900+ | Community-curated robocall/spam list |
+| CallShield | 51,000+ | Open-source Android spam DB (FCC, FTC, community) |
+| FCC Consumer Complaints | 10,000+ | Government unwanted-call complaint data |
+| SMS Spam Keywords | 30 patterns | Regex patterns from HuggingFace SMS Spam dataset |
 
 ## Tech Stack
 
@@ -99,7 +133,9 @@ GET /api/developer/lookup?phone=+919876543210&api_key=YOUR_KEY
     "lineType": "mobile",
     "fraudScore": 0,
     "isVoip": false,
-    "callerName": null
+    "callerName": null,
+    "isRoaming": false,
+    "isPorted": false
   }
 }
 ```
@@ -133,20 +169,24 @@ CallGuard is hardened against common web attacks:
 | **Rate Limiting** | Per-IP rate limits on all API endpoints |
 | **Input Validation** | Zod schemas with length limits on all endpoints |
 | **Clickjacking** | X-Frame-Options: DENY |
-| **Admin Auth** | Secret key protection on admin dashboard |
+| **Admin Auth** | Secret key + 3-attempt lockout with 24hr cooldown |
 
 ## Environment Variables
 
-| Variable | Description |
-| --- | --- |
-| `DATABASE_URL` | PostgreSQL connection string |
-| `NEXTAUTH_SECRET` | NextAuth session secret |
-| `NEXTAUTH_URL` | Your deployed URL |
-| `NUMVERIFY_API_KEY` | Numverify API key |
-| `IPQS_API_KEY` | IPQualityScore API key |
-| `NUMLOOKUP_API_KEY` | NumLookupAPI key |
-| `ADMIN_SECRET` | Admin dashboard secret key |
-| `DEVELOPER_API_KEYS` | Comma-separated API keys for developer endpoint |
+| Variable | Description | Required |
+| --- | --- | --- |
+| `DATABASE_URL` | PostgreSQL connection string | Yes |
+| `NEXTAUTH_SECRET` | NextAuth session secret | Yes |
+| `NEXTAUTH_URL` | Your deployed URL | Yes |
+| `ADMIN_SECRET` | Admin dashboard secret key | Yes |
+| `DEVELOPER_API_KEYS` | Comma-separated API keys for developer endpoint | Yes |
+| `NUMVERIFY_API_KEY` | Numverify API key | Optional |
+| `IPQS_API_KEY` | IPQualityScore API key | Optional |
+| `NUMLOOKUP_API_KEY` | NumLookupAPI key | Optional |
+| `NEUTRINO_API_USER_ID` | Neutrino API user ID | Optional |
+| `NEUTRINO_API_KEY` | Neutrino API key | Optional |
+
+> **Note:** All API keys are optional. The app works without any API keys using the local spam database and FreeCNAM (no key needed). Adding more keys improves lookup coverage.
 
 ## Contributing
 
